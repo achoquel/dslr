@@ -1,0 +1,732 @@
+﻿@{
+    ViewData["Title"] = "Pair plot";
+}
+
+<div class="container">
+    <a class="btn btn-outline-dark" href='@Url.Action("Index", "Charts")'>
+        <i class="fas fa-arrow-left"></i> Return
+    </a>
+    <div class="d-flex align-items-center">
+        <div class="container text-center">
+            <div id="spinnerPairPlot" class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <span id="loadingPairPlot" class="display-4 display-small">
+                <br>
+                Loading the Pair Plot.
+                <br>
+                This may take some time...
+            </span>
+        </div>
+    </div>
+    <div id="legend">
+        <div class="gryffindorColor text-center"><i class="fas fa-circle"></i> Gryffindor</div>
+        <div class="hufflepuffColor text-center"><i class="fas fa-play" style="transform: rotate(90deg)"></i> Hufflepuff</div>
+        <div class="slytherinColor text-center"><i class="fas fa-square"></i> Slytherin</div>
+        <div class="ravenclawColor text-center"><i class="fas fa-play" style="transform: rotate(-90deg)"></i> Ravenclaw</div>
+    </div>
+</div>
+<table id="pairPlotTable" class="row mt-3 mb-5">
+    <tr>
+        <td>
+            <div id="chart0-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-0">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-0">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-1">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-1">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-2">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-2">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-3">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-3">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-4">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-4">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-5">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-5">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-6">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-6">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-7">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-7">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-8">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-8">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-9">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-9">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-10">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-10">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-11">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-11">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="chart0-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart1-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart2-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart3-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart4-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart5-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart6-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart7-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart8-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart9-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart10-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart11-12">
+            </div>
+        </td>
+        <td>
+            <div id="chart12-12">
+            </div>
+        </td>
+    </tr>
+</table>

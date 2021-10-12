@@ -18,13 +18,24 @@ namespace common.Models
             InitializeFeatures();
         }
 
+        /// <summary>
+        /// Path of the dataset's file that we are using
+        /// </summary>
         public string Path { get; set; }
 
+        /// <summary>
+        /// Entries from the parsed dataset
+        /// </summary>
         public List<CsvEntryModel> Entries { get; set; }
 
+        /// <summary>
+        /// List of all the numerical features
+        /// </summary>
         public List<NumericalFeatureModel> Features { get; set; }
 
 
+
+        #region Public Methods
         public void Describe()
         {
             var headerThickness = new LineThickness(LineWidth.Single, LineWidth.Single);
@@ -108,25 +119,28 @@ namespace common.Models
             );
             ConsoleRenderer.RenderDocument(doc);
         }
+        #endregion
 
+        #region Private Methods
         private void InitializeFeatures()
         {
             Features = new List<NumericalFeatureModel>()
             {
-                new NumericalFeatureModel("Arithmancy", Entries.Select(e => e.Arithmancy).ToList()),
-                new NumericalFeatureModel("Astromomy", Entries.Select(e => e.Astronomy).ToList()),
-                new NumericalFeatureModel("Herbology", Entries.Select(e => e.Herbology).ToList()),
-                new NumericalFeatureModel("Def. against the Dark Arts", Entries.Select(e => e.DefenseAgainstTheDarkArts).ToList()),
-                new NumericalFeatureModel("Divination", Entries.Select(e => e.Divination).ToList()),
-                new NumericalFeatureModel("Muggle Studies", Entries.Select(e => e.MuggleStudies).ToList()),
-                new NumericalFeatureModel("Ancient Runes", Entries.Select(e => e.AncientRunes).ToList()),
-                new NumericalFeatureModel("History of Magic", Entries.Select(e => e.HistoryOfMagic).ToList()),
-                new NumericalFeatureModel("Transfiguration", Entries.Select(e => e.Transfiguration).ToList()),
-                new NumericalFeatureModel("Potions", Entries.Select(e => e.Potions).ToList()),
-                new NumericalFeatureModel("Care of Magical Creatures", Entries.Select(e => e.CareOfMagicalCreatures).ToList()),
-                new NumericalFeatureModel("Charms", Entries.Select(e => e.Charms).ToList()),
-                new NumericalFeatureModel("Flying", Entries.Select(e => e.Flying).ToList())
+                new NumericalFeatureModel("Arithmancy", (Entries.Select(e => (e.Arithmancy, e.House)).ToList())),
+                new NumericalFeatureModel("Astromomy", Entries.Select(e => (e.Astronomy, e.House)).ToList()),
+                new NumericalFeatureModel("Herbology", Entries.Select(e => (e.Herbology, e.House)).ToList()),
+                new NumericalFeatureModel("Defense against the Dark Arts", Entries.Select(e => (e.DefenseAgainstTheDarkArts, e.House)).ToList()),
+                new NumericalFeatureModel("Divination", Entries.Select(e => (e.Divination, e.House)).ToList()),
+                new NumericalFeatureModel("Muggle Studies", Entries.Select(e => (e.MuggleStudies, e.House)).ToList()),
+                new NumericalFeatureModel("Ancient Runes", Entries.Select(e => (e.AncientRunes, e.House)).ToList()),
+                new NumericalFeatureModel("History of Magic", Entries.Select(e => (e.HistoryOfMagic, e.House)).ToList()),
+                new NumericalFeatureModel("Transfiguration", Entries.Select(e => (e.Transfiguration, e.House)).ToList()),
+                new NumericalFeatureModel("Potions", Entries.Select(e => (e.Potions, e.House)).ToList()),
+                new NumericalFeatureModel("Care of Magical Creatures", Entries.Select(e => (e.CareOfMagicalCreatures, e.House)).ToList()),
+                new NumericalFeatureModel("Charms", Entries.Select(e => (e.Charms, e.House)).ToList()),
+                new NumericalFeatureModel("Flying", Entries.Select(e => (e.Flying, e.House)).ToList())
             };
         }
+        #endregion
     }
 }

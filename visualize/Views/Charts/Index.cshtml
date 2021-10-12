@@ -1,0 +1,63 @@
+﻿@model ChartsIndexViewModel
+
+@{
+    ViewData["Title"] = "Visualization";
+
+    //We pre-generate our selectboxes to avoid code duplication
+    string courseOptionList = "<option value='-1' selected disabled>Select a course</option>";
+    for (int i = 0; i < Model.Courses.Count; ++i)
+    {
+        courseOptionList += $"<option value='{i}'>{Model.Courses[i]}</option>";
+    }
+}
+
+<div id="chartsIndex" class="container">
+    <h1 class="display-3 text-center">Data Visualization</h1>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="histogram-tab" data-toggle="tab" href="#histogram" role="tab" aria-controls="histogram" aria-selected="true">Histograms</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="scatter-tab" data-toggle="tab" href="#scatter" role="tab" aria-controls="scatter" aria-selected="false">Scatter plots</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="pairplot-tab" href="#" role="tab" aria-selected="false">Pair plot</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="histogram" role="tabpanel" aria-labelledby="histogram-tab">
+            <h3 class="display-4 display-small text-center mt-3">Repartition of the notes between houses for a specific course</h3>
+            <div class="form-group mt-3 mb-3">
+                <label for="histogramCourseSelector" class="col-form-label col-form-label-lg">Course</label>
+                <select class="form-control form-control-lg" id="histogramCourseSelector">
+                    @Html.Raw(courseOptionList)
+                </select>
+            </div>
+            <div class="col-12" id="histogramChart">
+
+            </div>
+        </div>
+        <div class="tab-pane fade" id="scatter" role="tabpanel" aria-labelledby="scatter-tab">
+            <h3 class="display-4 display-small text-center mt-3">Repartition of the notes between two courses among houses</h3>
+            <div class="row justify-content-md-center">
+                <div class="form-group mt-3 mb-3 col-5 mr-1">
+                    <label class="col-form-label col-form-label-lg" for="scatterCourse1Selector">First course</label>
+                    <select class="form-control form-control-lg" id="scatterCourse1Selector">
+                        @Html.Raw(courseOptionList)
+                    </select>
+                </div>
+                <div class="form-group mt-3 mb-3 col-5 ml-1">
+                    <label for="scatterCourse2Selector" class="col-form-label col-form-label-lg">Second course</label>
+                    <select class="form-control form-control-lg" id="scatterCourse2Selector">
+                        @Html.Raw(courseOptionList)
+                    </select>
+                </div>
+                
+            </div>
+
+            <div class="col-12" id="scatterChart">
+
+            </div>
+        </div>
+    </div>
+</div>

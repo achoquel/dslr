@@ -10,29 +10,27 @@ namespace common.Models
     public class NumericalFeatureModel
     {
 
-        public NumericalFeatureModel(string name, List<float> values)
+        public NumericalFeatureModel(string name, List<(float value, string house)> values)
         {
             FeatureName = name;
+            RawValues = values.Select(v => v.value).ToList();
             Values = values;
+            FeatureScaling();
         }
 
         public string FeatureName { get; set; }
 
-        public List<float> Values { get; set; }
+        public List<float> RawValues { get; set; }
 
-        public List<float> ValuesOrdered
-        {
-            get
-            {
-                return Values.OrderBy(x => x).ToList();
-            }
-        }
+        public List<(float Value, string House)> Values { get; set; }
+
+        public List<(float, string House)> ValuesStandardized { get; set; }
 
         public int Count
         {
             get
             {
-                return MathUtils.Count(Values);
+                return MathUtils.Count(RawValues);
             }
         }
 
@@ -40,7 +38,7 @@ namespace common.Models
         {
             get
             {
-                return MathUtils.Mean(Values);
+                return MathUtils.Mean(RawValues);
             }
         }
 
@@ -48,7 +46,7 @@ namespace common.Models
         {
             get
             {
-                return MathUtils.StdDev(Values);
+                return MathUtils.StdDev(RawValues);
             }
         }
 
@@ -56,7 +54,7 @@ namespace common.Models
         {
             get
             {
-                return MathUtils.Min(Values);
+                return MathUtils.Min(RawValues);
             }
         }
 
@@ -64,7 +62,7 @@ namespace common.Models
         {
             get
             {
-                return MathUtils.Q1(Values);
+                return MathUtils.Q1(RawValues);
             }
         }
 
@@ -72,7 +70,7 @@ namespace common.Models
         {
             get
             {
-                return MathUtils.Med(Values);
+                return MathUtils.Med(RawValues);
             }
         }
 
@@ -80,7 +78,7 @@ namespace common.Models
         {
             get
             {
-                return MathUtils.Q3(Values);
+                return MathUtils.Q3(RawValues);
             }
         }
 
@@ -88,8 +86,23 @@ namespace common.Models
         {
             get
             {
-                return MathUtils.Max(Values);
+                return MathUtils.Max(RawValues);
             }
         }
+
+        #region Private Methods
+
+        public static List<float> StandardizeValues(List<float> values)
+        {
+            return values.Select(x => (x - MathUtils.Mean(values)) / (MathUtils.StdDev(values))).ToList();
+        }
+
+        private void FeatureScaling()
+        {
+            //Perform Standardization (Z-score Normalization)
+            // x' = x - average(x) / standard deviation
+            ValuesStandardized = Values.Select(x => (((x.Value - Mean) / StdDev), x.House)).ToList();
+        }
+        #endregion
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "describe": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\Adrien\\source\\repos\\dslr\\describe\\dataset_test.csv\""
+      "commandLineArgs": "\"C:\\Users\\Adrien\\source\\repos\\dslr\\describe\\dataset_train.csv\""
     }
   }
 }
