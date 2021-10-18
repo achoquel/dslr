@@ -1,0 +1,45 @@
+﻿<Properties StartupConfiguration="{0ED09156-34B5-4E8D-A289-E84277362D67}|Default">
+  <MonoDevelop.Ide.ItemProperties.logreg__train PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="logreg_train/Models/LogRegDatasModel.cs">
+    <Files>
+      <File FileName="logreg_train/Controllers/LogregController.cs" Line="80" Column="29" />
+      <File FileName="logreg_train/Models/LogRegDatasModel.cs" Line="104" Column="94" />
+      <File FileName="common/Models/DatasetModel.cs" />
+      <File FileName="logreg_train/Program.cs" />
+      <File FileName="common/Models/CsvEntryModel.cs" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="dslr" expanded="True" selected="True">
+            <Node name="common" expanded="True">
+              <Node name="Models" expanded="True" />
+            </Node>
+            <Node name="describe" expanded="True" />
+            <Node name="logreg_train" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Models" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>entries</Value>
+          <Value>test</Value>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.describe PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/adrian/Projects/dslr/logreg_train/Controllers/LogregController.cs" relfile="logreg_train/Controllers/LogregController.cs" line="29" column="1" />
+      <Breakpoint file="/Users/adrian/Projects/dslr/logreg_train/Models/LogRegDatasModel.cs" relfile="logreg_train/Models/LogRegDatasModel.cs" line="25" column="1" />
+      <Breakpoint file="/Users/adrian/Projects/dslr/logreg_train/Models/LogRegDatasModel.cs" relfile="logreg_train/Models/LogRegDatasModel.cs" line="20" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

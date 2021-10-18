@@ -9,7 +9,7 @@ namespace logreg_train.Models
 {
     public class LogRegDatasModel
     {
-        private static readonly string[] SELECTED_FEATURES = new[] { "", "", "" };
+        public static readonly string[] SELECTED_FEATURES = new[] { "Herbology", "Arithmancy", "Defense against the Dark Arts", "Divination", "Charms", "Ancient Runes" };
         public List<CsvEntryModel> BaseEntries { get; set; }
 
         public LogRegEntryModel[] X
@@ -19,9 +19,11 @@ namespace logreg_train.Models
                 LogRegEntryModel[] entries = new LogRegEntryModel[BaseEntries.Count];
                 for(int i = 0; i < BaseEntries.Count; ++i)
                 {
+                    entries[i].X = new float[SELECTED_FEATURES.Length];
                     for (int j = 0; j < SELECTED_FEATURES.Length; ++j)
                     {
-                        entries[i].X[j] = (float)BaseEntries[i].GetType().GetField(SELECTED_FEATURES[0]).GetValue(null);
+                        var type = typeof(CsvEntryModel);
+                        entries[i].X[j] = (float)type.GetProperty(SELECTED_FEATURES[j]).GetValue(BaseEntries[i], null);
                     }
                 }
                 return entries;
@@ -38,7 +40,7 @@ namespace logreg_train.Models
                     if (BaseEntries[i].House == "Gryffindor")
                         res[i] = 1;
                     else
-                        res[i] = 1;
+                        res[i] = 0;
                     ++i;
                 }
                 return res;
@@ -55,7 +57,7 @@ namespace logreg_train.Models
                     if (BaseEntries[i].House == "Hufflepuff")
                         res[i] = 1;
                     else
-                        res[i] = 1;
+                        res[i] = 0;
                     ++i;
                 }
                 return res;
@@ -72,7 +74,7 @@ namespace logreg_train.Models
                     if (BaseEntries[i].House == "Slytherin")
                         res[i] = 1;
                     else
-                        res[i] = 1;
+                        res[i] = 0;
                     ++i;
                 }
                 return res;
@@ -89,7 +91,7 @@ namespace logreg_train.Models
                     if (BaseEntries[i].House == "Ravenclaw")
                         res[i] = 1;
                     else
-                        res[i] = 1;
+                        res[i] = 0;
                     ++i;
                 }
                 return res;
@@ -99,6 +101,6 @@ namespace logreg_train.Models
 
     public class LogRegEntryModel
     {
-        public float[] X { get; set; }
+        public float[] X { get; set; } = new float[LogRegDatasModel.SELECTED_FEATURES.Length];
     }
 }

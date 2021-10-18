@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UN/63NqLuQm7U/t5hd/jwdspVToH0pzGcZ6INWbTrtl++tYAXD4SNsKwqa9++oR9CjY2BerF6h3rxyU+/DQk+A==",
+  "dgSpecHash": "eI/9080Us8a8a3yAWw7rYKgi31SGz7XDCojsGF4K5PyUC6kDqTqpVgpwlAhxZhhZ6hHAgU5vK5hOXtqNkNK3wA==",
   "success": true,
-  "projectFilePath": "/Users/adrian/Projects/dslr/common/common.csproj",
+  "projectFilePath": "/Users/adrian/Projects/dslr/logreg_train/logreg_train.csproj",
   "expectedPackageFiles": [
     "/Users/adrian/.nuget/packages/alba.csconsoleformat/1.0.0/alba.csconsoleformat.1.0.0.nupkg.sha512",
     "/Users/adrian/.nuget/packages/microsoft.csharp/4.3.0/microsoft.csharp.4.3.0.nupkg.sha512",

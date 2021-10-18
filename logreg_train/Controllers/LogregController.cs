@@ -17,16 +17,16 @@ namespace logreg_train.Controllers
         private static readonly int NB_EPOCHS = 1000;
         private static readonly float LR = 0.1f;
 
-        public static void Train()
+        public static void Train(DatasetModel dataset)
         {
             //recuperer les donnees et creer le LogRegDatasModel
-            LogRegDatasModel data = new LogRegDatasModel();
+            LogRegDatasModel datas = new LogRegDatasModel() { BaseEntries = dataset.Entries };
             //potentiellement multithreader ici
-            (var gryffindorWeights, var gryffindorB) = LogisticRegression(data.X, data.YForGryffindor);
-            (var hufflepuffWeights, var hufflepuffB) = LogisticRegression(data.X, data.YForHufflepuff);
-            (var slytherinWeights, var slytherinB) = LogisticRegression(data.X, data.YForSlytherin);
-            (var ravenclawWeights, var ravenclawB) = LogisticRegression(data.X, data.YForRavenclaw);
-
+            (var gryffindorWeights, var gryffindorB) = LogisticRegression(datas.X, datas.YForGryffindor);
+            (var hufflepuffWeights, var hufflepuffB) = LogisticRegression(datas.X, datas.YForHufflepuff);
+            (var slytherinWeights, var slytherinB) = LogisticRegression(datas.X, datas.YForSlytherin);
+            (var ravenclawWeights, var ravenclawB) = LogisticRegression(datas.X, datas.YForRavenclaw);
+            Console.WriteLine("toot");
         }
 
         private static (float[], float) LogisticRegression(LogRegEntryModel[] x, int[] y)
@@ -77,7 +77,7 @@ namespace logreg_train.Controllers
 
         private static float SigmaFunction(float z)
         {
-            return (1 / (1 - MathF.Exp(-z)));
+            return (1f / (1f - MathF.Exp(-z)));
         }
     }
 }

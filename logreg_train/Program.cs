@@ -1,4 +1,7 @@
 ﻿using System;
+using common.Controllers;
+using common.Models;
+using logreg_train.Controllers;
 
 namespace logreg_train
 {
@@ -6,7 +9,19 @@ namespace logreg_train
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            try
+            {
+                if (args.Length > 0 )
+                {
+                    Console.WriteLine(args[0]);
+                    DatasetModel dataset = DatasetParsingController.ParseDatasetFromFile(args[0]);
+                    LogregController.Train(dataset);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred: " + e.Message);
+            }
         }
     }
 }

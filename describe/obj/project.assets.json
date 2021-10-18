@@ -5216,34 +5216,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Adrien\\.nuget\\packages\\": {}
+    "/Users/adrian/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Adrien\\source\\repos\\dslr\\describe\\describe.csproj",
+      "projectUniqueName": "/Users/adrian/Projects/dslr/describe/describe.csproj",
       "projectName": "describe",
-      "projectPath": "C:\\Users\\Adrien\\source\\repos\\dslr\\describe\\describe.csproj",
-      "packagesPath": "C:\\Users\\Adrien\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Adrien\\source\\repos\\dslr\\describe\\obj\\",
+      "projectPath": "/Users/adrian/Projects/dslr/describe/describe.csproj",
+      "packagesPath": "/Users/adrian/.nuget/packages/",
+      "outputPath": "/Users/adrian/Projects/dslr/describe/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Adrien\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/adrian/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\Adrien\\source\\repos\\dslr\\common\\common.csproj": {
-              "projectPath": "C:\\Users\\Adrien\\source\\repos\\dslr\\common\\common.csproj"
+            "/Users/adrian/Projects/dslr/common/common.csproj": {
+              "projectPath": "/Users/adrian/Projects/dslr/common/common.csproj"
             }
           }
         }
@@ -5272,7 +5270,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.402/RuntimeIdentifierGraph.json"
       }
     }
   }
