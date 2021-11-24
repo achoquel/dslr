@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "1t7sTB6BbcxMdbOlZ2VhuW22XVDih8kNDNA+vg1Pzpjt4opqsOZSsxnsuE0EUvt3euKbd7OyiHxgz6NSy9ZhNQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Adrien\\source\\repos\\dslr\\accuracy\\accuracy.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Adrien\\.nuget\\packages\\tinycsvparser\\2.6.1\\tinycsvparser.2.6.1.nupkg.sha512"
+  ],
+  "logs": []
+}

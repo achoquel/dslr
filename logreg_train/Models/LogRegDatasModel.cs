@@ -1,106 +1,149 @@
 ﻿using common.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace logreg_train.Models
 {
     public class LogRegDatasModel
     {
-        public static readonly string[] SELECTED_FEATURES = new[] { "Herbology", "Arithmancy", "Defense against the Dark Arts", "Divination", "Charms", "Ancient Runes" };
-        public List<CsvEntryModel> BaseEntries { get; set; }
+        /// <summary>
+        /// Creates a LogRegDatasModel based on the features from the dataset
+        /// </summary>
+        /// <param name="features"></param>
+        public LogRegDatasModel(List<NumericalFeatureModel> features)
+        {
+            Features = features;
+            TotalCount = Features[0].Count;
+        }
 
-        public LogRegEntryModel[] X
+        /// <summary>
+        /// The total ammount of entries
+        /// </summary>
+        public int TotalCount { get; set; }
+
+        /// <summary>
+        /// The features from the dataset
+        /// </summary>
+        public List<NumericalFeatureModel> Features { get; set; }
+
+        /// <summary>
+        /// Features standardized, reorganized for practical purposes during LogReg
+        /// </summary>
+        public List<float[]> X
         {
             get
             {
-                LogRegEntryModel[] entries = new LogRegEntryModel[BaseEntries.Count];
-                for(int i = 0; i < BaseEntries.Count; ++i)
+                List<float[]> xlist = new List<float[]>();
+                for (int i = 0; i < TotalCount; ++i)
                 {
-                    entries[i].X = new float[SELECTED_FEATURES.Length];
-                    for (int j = 0; j < SELECTED_FEATURES.Length; ++j)
+                    var e = new float[Features.Count];
+                    for (int j = 0; j < Features.Count; ++j)
                     {
-                        var type = typeof(CsvEntryModel);
-                        entries[i].X[j] = (float)type.GetProperty(SELECTED_FEATURES[j]).GetValue(BaseEntries[i], null);
+                        e[j] = Features[j].ValuesStandardized[i].Value;
                     }
+                    xlist.Add(e);
                 }
-                return entries;
+                return xlist;
             }
         }
 
+        /// <summary>
+        /// An array of int, defining if students belongs to Gryffindor or not
+        /// </summary>
         public int[] YForGryffindor
         {
             get
             {
-                int[] res = new int[BaseEntries.Count];
-                for (int i = 0; i < BaseEntries.Count; ++i)
+                int[] res = new int[Features[0].Count];
+                for (int i = 0; i < Features[0].Count; ++i)
                 {
-                    if (BaseEntries[i].House == "Gryffindor")
+                    if (Features[0].Values[i].House == "Gryffindor")
+                    {
                         res[i] = 1;
+                    }
                     else
+                    {
                         res[i] = 0;
+                    }
+
                     ++i;
                 }
                 return res;
             }
         }
 
+        /// <summary>
+        /// An array of int, defining if students belongs to Hufflepuff or not
+        /// </summary>
         public int[] YForHufflepuff
         {
             get
             {
-                int[] res = new int[BaseEntries.Count];
-                for (int i = 0; i < BaseEntries.Count; ++i)
+                int[] res = new int[Features[0].Count];
+                for (int i = 0; i < Features[0].Count; ++i)
                 {
-                    if (BaseEntries[i].House == "Hufflepuff")
+                    if (Features[0].Values[i].House == "Hufflepuff")
+                    {
                         res[i] = 1;
+                    }
                     else
+                    {
                         res[i] = 0;
+                    }
+
                     ++i;
                 }
                 return res;
             }
         }
 
+        /// <summary>
+        /// An array of int, defining if students belongs to Slytherin or not
+        /// </summary>
         public int[] YForSlytherin
         {
             get
             {
-                int[] res = new int[BaseEntries.Count];
-                for (int i = 0; i < BaseEntries.Count; ++i)
+                int[] res = new int[Features[0].Count];
+                for (int i = 0; i < Features[0].Count; ++i)
                 {
-                    if (BaseEntries[i].House == "Slytherin")
+                    if (Features[0].Values[i].House == "Slytherin")
+                    {
                         res[i] = 1;
+                    }
                     else
+                    {
                         res[i] = 0;
+                    }
+
                     ++i;
                 }
                 return res;
             }
         }
 
+        /// <summary>
+        /// An array of int, defining if students belongs to Ravenclaw or not
+        /// </summary>
         public int[] YForRavenclaw
         {
             get
             {
-                int[] res = new int[BaseEntries.Count];
-                for (int i = 0; i < BaseEntries.Count; ++i)
+                int[] res = new int[Features[0].Count];
+                for (int i = 0; i < Features[0].Count; ++i)
                 {
-                    if (BaseEntries[i].House == "Ravenclaw")
+                    if (Features[0].Values[i].House == "Ravenclaw")
+                    {
                         res[i] = 1;
+                    }
                     else
+                    {
                         res[i] = 0;
+                    }
+
                     ++i;
                 }
                 return res;
             }
         }
-    }
-
-    public class LogRegEntryModel
-    {
-        public float[] X { get; set; } = new float[LogRegDatasModel.SELECTED_FEATURES.Length];
     }
 }

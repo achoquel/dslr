@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\common\common.csproj" />
+    <ProjectReference Include="..\logreg_predict\logreg_predict.csproj" />
+    <ProjectReference Include="..\logreg_train\logreg_train.csproj" />
   </ItemGroup>
 
 </Project>

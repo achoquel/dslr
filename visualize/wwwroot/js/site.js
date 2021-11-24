@@ -4,7 +4,20 @@
 // Write your JavaScript code.
 
 $(document).ready(() => {
+
+    //Replaces the placeholder in file selectors with the file names
+    $('#datasetFile,#testDataset').each(function () {
+        $(this).on('change', function () {
+            //get the file name
+            var fileName = $(this).val();
+            var split = fileName.split('\\').join('/').split('/');
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(split[split.length - 1]);
+        });
+    });
+
     if (document.getElementById('chartsIndex')) {
+        //Handle ajax request for histograms
         $("#histogramCourseSelector").on("change", () => {
             var option = $("#histogramCourseSelector").find(":selected").text();
             if (option != "Select a course") {
@@ -19,7 +32,8 @@ $(document).ready(() => {
                 )
             }
         })
-
+      
+        //Handle scatter plot select boxes
         $("#scatterCourse1Selector").on("change", () => {
             handleScatterPlot()
         })
@@ -27,15 +41,39 @@ $(document).ready(() => {
             handleScatterPlot()
         })
 
+        //Handle pairplot redirection
         $("#pairplot-tab").on("click", () => {
-            window.location.href="/Charts/PairPlot"
+            window.location.href = "/Charts/PairPlot"
         })
     }
-    
+
+    //Handle pairplot creation
     if (document.getElementById('pairPlotTable')) {
         $("#legend").hide();
         createPairPlot()
     }
+
+    //Handle training results datatable
+    if (document.getElementById('trainIndex')) {
+        $("#weightsDatatable").DataTable({
+            "paging": false,
+            "search": false,
+            "ordering": false,
+            "searching": false,
+            "bInfo": false,
+            "info": false
+        });
+    }
+
+    //Handle prediction result datatable
+    if (document.getElementById('predictIndex')) {
+        $('#predictionDatatable').DataTable();
+    }
+
+    //Handle modal display when submitting training form
+    $("#trainForm").on("submit", () => {
+        $("#trainingModal").modal({ backdrop: 'static' }).modal('show');
+    })
 })
 
 
@@ -68,114 +106,123 @@ function handleScatterPlot() {
 }
 
 function displayHistogram(data) {
-    var chart = Highcharts.chart('histogramChart', {
-        title: {
-            text: data['title']
-        },
+    if (data == false)
+        displayHistogramError()
+    else {
+        var chart = Highcharts.chart('histogramChart', {
+            title: {
+                text: data['title']
+            },
+            subtitle: {
+                text: data['subtitle']
+            },
+            xAxis: [{
+                opposite: true,
+                visible: false
+            }, {
+                title: { text: data['xAxisName'] }
+            }],
 
-        xAxis: [{
-            opposite: true,
-            visible: false
-        }, {
-            title: { text: data['xAxisName'] }
-        }],
+            yAxis: [{
+                opposite: true,
+                visible: false
+            }, {
+                title: { text: data['yAxisName'] }
+            }],
 
-        yAxis: [{
-            opposite: true,
-            visible: false
-        }, {
-            title: { text: data['yAxisName'] }
-        }],
-
-        plotOptions: {
-            histogram: {
-                accessibility: {
-                    point: {
-                        valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
-                    }
+            plotOptions: {
+                series: {
+                    turboThreshold: 10000
+                },
+                histogram: {
+                    accessibility: {
+                        point: {
+                            valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
+                        }
+                    },
                 }
-            }
-        },
-        credits: {
-            enabled: false
-        },
-        series: [
-            //Gryffindor
-            {
-                name: data['series'][0]['name'],
-                type: 'histogram',
-                xAxis: 1,
-                color: 'rgba(101,0,0,255)',
-                opacity: 0.8,
-                yAxis: 1,
-                baseSeries: 'gryffindorNotes',
-                zIndex: -1
             },
-            {
-                name: 'gData',
-                type: 'scatter',
-                data: data['series'][0]['data'],
-                visible: false,
-                id: 'gryffindorNotes',
+            credits: {
+                enabled: false
             },
-            //Hufflepuff
-            {
-                name: data['series'][1]['name'],
-                type: 'histogram',
-                xAxis: 1,
-                color: 'rgba(255,157,10,255)',
-                opacity: 0.8,
-                yAxis: 1,
-                baseSeries: 'hufflepuffNotes',
-                zIndex: -1
-            }, {
-                name: 'hData',
-                type: 'scatter',
-                data: data['series'][1]['data'],
-                visible: false,
-                id: 'hufflepuffNotes',
-            },
-            //Slytherin
-            {
-                name: data['series'][2]['name'],
-                type: 'histogram',
-                xAxis: 1,
-                color: 'rgba(47,117,28,255)',
-                opacity: 0.8,
-                yAxis: 1,
-                baseSeries: 'slytherinNotes',
-                zIndex: -1
-            }, {
-                name: 'sData',
-                type: 'scatter',
-                data: data['series'][2]['data'],
-                visible: false,
-                id: 'slytherinNotes',
-            },
-            //Ravenclaw
-            {
-                name: data['series'][3]['name'],
-                type: 'histogram',
-                xAxis: 1,
-                color: 'rgba(26,57,86,255)',
-                opacity: 0.8,
-                yAxis: 1,
-                baseSeries: 'ravenclawNotes',
-                zIndex: -1
-            }, {
-                name: 'rData',
-                type: 'scatter',
-                data: data['series'][3]['data'],
-                visible: false,
-                id: 'ravenclawNotes',
-            }
-        ]
-    });
-    //remove the scatter series from the chart since we don't need them
-    chart.get('ravenclawNotes').remove();
-    chart.get('slytherinNotes').remove();
-    chart.get('hufflepuffNotes').remove();
-    chart.get('gryffindorNotes').remove();
+            series: [
+                //Gryffindor
+                {
+                    name: data['series'][0]['name'],
+                    type: 'histogram',
+                    xAxis: 1,
+                    color: 'rgba(101,0,0,255)',
+                    opacity: 0.6,
+                    yAxis: 1,
+                    baseSeries: 'gryffindorNotes',
+                    zIndex: -1
+                },
+                {
+                    name: 'gData',
+                    type: 'scatter',
+                    data: data['series'][0]['data'],
+                    visible: false,
+                    id: 'gryffindorNotes',
+                },
+                //Hufflepuff
+                {
+                    name: data['series'][1]['name'],
+                    type: 'histogram',
+                    xAxis: 1,
+                    color: 'rgba(255,157,10,255)',
+                    opacity: 0.6,
+                    yAxis: 1,
+                    baseSeries: 'hufflepuffNotes',
+                    zIndex: -1
+                }, {
+                    name: 'hData',
+                    type: 'scatter',
+                    data: data['series'][1]['data'],
+                    visible: false,
+                    id: 'hufflepuffNotes',
+                },
+                //Slytherin
+                {
+                    name: data['series'][2]['name'],
+                    type: 'histogram',
+                    xAxis: 1,
+                    color: 'rgba(47,117,28,255)',
+                    opacity: 0.6,
+                    yAxis: 1,
+                    baseSeries: 'slytherinNotes',
+                    zIndex: -1
+                }, {
+                    name: 'sData',
+                    type: 'scatter',
+                    data: data['series'][2]['data'],
+                    visible: false,
+                    id: 'slytherinNotes',
+                },
+                //Ravenclaw
+                {
+                    name: data['series'][3]['name'],
+                    type: 'histogram',
+                    xAxis: 1,
+                    color: 'rgba(26,57,86,255)',
+                    opacity: 0.6,
+                    yAxis: 1,
+                    baseSeries: 'ravenclawNotes',
+                    zIndex: -1
+                }, {
+                    name: 'rData',
+                    type: 'scatter',
+                    data: data['series'][3]['data'],
+                    visible: false,
+                    id: 'ravenclawNotes',
+                }
+            ]
+        });
+        //remove the scatter series from the chart since we don't need them
+        chart.get('ravenclawNotes').remove();
+        chart.get('slytherinNotes').remove();
+        chart.get('hufflepuffNotes').remove();
+        chart.get('gryffindorNotes').remove();
+    }
 }
 
 function displayHistogramError() {
@@ -183,85 +230,92 @@ function displayHistogramError() {
 }
 
 function displayScatterPlot(data) {
-    Highcharts.chart('scatterChart', {
-        chart: {
-            type: 'scatter',
-            zoomType: 'xy'
-        },
-        plotOptions:
-        {
-            scatter: {
-                marker: {
-                    radius: 5,
-                    states: {
-                        hover: {
-                            enabled: true,
-                            lineColor: 'rgb(100,100,100)'
-                        }
-                    },
-                }
+    if (data == false)
+        displayScatterPlotError()
+    else {
+        Highcharts.chart('scatterChart', {
+            chart: {
+                type: 'scatter',
+                zoomType: 'xy'
             },
-            series: {
-                turboThreshold: 10000
-            },
+            plotOptions:
+            {
+                scatter: {
+                    marker: {
+                        radius: 5,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                lineColor: 'rgb(100,100,100)'
+                            }
+                        },
+                    }
+                },
+                series: {
+                    turboThreshold: 10000
+                },
 
-        },
-        title: {
-            text: data['title']
-        },
-        tooltip: {
-            headerFormat: '<b>{series.name}</b><br>',
-            pointFormat: "<b>" + data['xAxisName'] + ": </b>{point.x}<br><b>" + data['yAxisName'] + ": </b>{point.y}"
-        },
-        xAxis: {
+            },
             title: {
-                enabled: true,
-                text: data['xAxisName']
+                text: data['title']
             },
-            crosshair: true,
-            startOnTick: true,
-            endOnTick: true,
-            showLastLabel: true
-        },
-        yAxis: {
-            title: {
-                text: data['yAxisName']
+            subtitle: {
+                text: data['subtitle']
             },
-            crosshair: true,
-            startOnTick: true,
-            endOnTick: true,
-            showLastLabel: true
-        },
-        credits: {
-            enabled: false
-        },
-        series: [
-            {
-                //Gryffindor
-                name: data['series'][0]['name'],
-                color: 'rgba(101,0,0,255)',
-                data: data['series'][0]['data']
+            tooltip: {
+                headerFormat: '<b>{series.name}</b><br>',
+                pointFormat: "<b>" + data['xAxisName'] + ": </b>{point.x}<br><b>" + data['yAxisName'] + ": </b>{point.y}"
             },
-            {
-                //Hufflepuff
-                name: data['series'][1]['name'],
-                color: 'rgba(255,157,10,255)',
-                data: data['series'][1]['data']
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: data['xAxisName']
+                },
+                crosshair: true,
+                startOnTick: true,
+                endOnTick: true,
+                showLastLabel: true
             },
-            {
-                //Slytherin
-                name: data['series'][2]['name'],
-                color: 'rgba(47,117,28,255)',
-                data: data['series'][2]['data']
+            yAxis: {
+                title: {
+                    text: data['yAxisName']
+                },
+                crosshair: true,
+                startOnTick: true,
+                endOnTick: true,
+                showLastLabel: true
             },
-            {
-                //Ravenclaw
-                name: data['series'][3]['name'],
-                color: 'rgba(26,57,86,255)',
-                data: data['series'][3]['data']
-            }
-        ]
-    })
+            credits: {
+                enabled: false
+            },
+            series: [
+                {
+                    //Gryffindor
+                    name: data['series'][0]['name'],
+                    color: 'rgba(101,0,0,255)',
+                    data: data['series'][0]['data']
+                },
+                {
+                    //Hufflepuff
+                    name: data['series'][1]['name'],
+                    color: 'rgba(255,157,10,255)',
+                    data: data['series'][1]['data']
+                },
+                {
+                    //Slytherin
+                    name: data['series'][2]['name'],
+                    color: 'rgba(47,117,28,255)',
+                    data: data['series'][2]['data']
+                },
+                {
+                    //Ravenclaw
+                    name: data['series'][3]['name'],
+                    color: 'rgba(26,57,86,255)',
+                    data: data['series'][3]['data']
+                }
+            ]
+        })
+    }
 }
 
 function displayScatterPlotError() {
@@ -304,6 +358,9 @@ function createPairPlotHistogramChart(data) {
         title: {
             text: data['title']
         },
+        subtitle: {
+            text: data['subtitle']
+        },
 
         xAxis: [{
             opposite: true,
@@ -328,7 +385,7 @@ function createPairPlotHistogramChart(data) {
                             lineColor: 'rgb(100,100,100)'
                         }
                     },
-                }
+                },
             },
             series: {
                 states: {
@@ -353,7 +410,7 @@ function createPairPlotHistogramChart(data) {
                 type: 'histogram',
                 xAxis: 1,
                 color: 'rgba(101,0,0,255)',
-                opacity: 0.8,
+                opacity: 0.6,
                 yAxis: 1,
                 enableMouseTracking: false,
                 "showInLegend": false,
@@ -373,7 +430,7 @@ function createPairPlotHistogramChart(data) {
                 type: 'histogram',
                 xAxis: 1,
                 color: 'rgba(255,157,10,255)',
-                opacity: 0.8,
+                opacity: 0.6,
                 yAxis: 1,
                 enableMouseTracking: false,
                 baseSeries: 'hufflepuffNotes',
@@ -392,7 +449,7 @@ function createPairPlotHistogramChart(data) {
                 type: 'histogram',
                 xAxis: 1,
                 color: 'rgba(47,117,28,255)',
-                opacity: 0.8,
+                opacity: 0.6,
                 enableMouseTracking: false,
                 yAxis: 1,
                 "showInLegend": false,
@@ -412,7 +469,7 @@ function createPairPlotHistogramChart(data) {
                 xAxis: 1,
                 color: 'rgba(26,57,86,255)',
                 enableMouseTracking: false,
-                opacity: 0.8,
+                opacity: 0.6,
                 yAxis: 1,
                 baseSeries: 'ravenclawNotes',
                 "showInLegend": false,
@@ -470,6 +527,9 @@ function createPairPlotScatterChart(data) {
         title: {
             text: data['title']
         },
+        subtitle: {
+            text: data['subtitle']
+        },
         credits: {
             enabled: false
         },
@@ -497,7 +557,7 @@ function createPairPlotScatterChart(data) {
                 //Gryffindor
                 name: data['series'][0]['name'],
                 color: 'rgba(101,0,0,255)',
-                opacity: 0.8,
+                opacity: 0.6,
                 data: data['series'][0]['data'],
                 "showInLegend": false,
             },
@@ -505,7 +565,7 @@ function createPairPlotScatterChart(data) {
                 //Hufflepuff
                 name: data['series'][1]['name'],
                 color: 'rgba(255,157,10,255)',
-                opacity: 0.8,
+                opacity: 0.6,
                 "showInLegend": false,
                 data: data['series'][1]['data']
             },
@@ -513,7 +573,7 @@ function createPairPlotScatterChart(data) {
                 //Slytherin
                 name: data['series'][2]['name'],
                 color: 'rgba(47,117,28,255)',
-                opacity: 0.8,
+                opacity: 0.6,
                 "showInLegend": false,
                 data: data['series'][2]['data']
             },
@@ -521,7 +581,7 @@ function createPairPlotScatterChart(data) {
                 //Ravenclaw
                 name: data['series'][3]['name'],
                 color: 'rgba(26,57,86,255)',
-                opacity: 0.8,
+                opacity: 0.6,
                 "showInLegend": false,
                 data: data['series'][3]['data']
             }

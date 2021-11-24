@@ -13,15 +13,18 @@
 
 <div id="chartsIndex" class="container">
     <h1 class="display-3 text-center">Data Visualization</h1>
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <a class="nav-link active" id="histogram-tab" data-toggle="tab" href="#histogram" role="tab" aria-controls="histogram" aria-selected="true">Histograms</a>
+            <a class="nav-link active" id="histogram-tab" data-toggle="tab" href="#histogram" role="tab" aria-controls="histogram" aria-selected="true"><i class="far fa-chart-bar"></i> Histograms</a>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="scatter-tab" data-toggle="tab" href="#scatter" role="tab" aria-controls="scatter" aria-selected="false">Scatter plots</a>
+            <a class="nav-link" id="scatter-tab" data-toggle="tab" href="#scatter" role="tab" aria-controls="scatter" aria-selected="false"><i class="far fa-chart-scatter"></i> Scatter plots</a>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="pairplot-tab" href="#" role="tab" aria-selected="false">Pair plot</a>
+            <a class="nav-link" id="pairplot-tab" href="#" role="tab" aria-selected="false"><i class="fal fa-th"></i> Pair plot</a>
+        </li>
+        <li class="nav-item ml-auto" role="presentation">
+            <a class="nav-link" id="train-tab" data-toggle="tab" href="#train" role="tab" aria-controls="train" aria-selected="false"><i class="fas fa-cogs"></i> Train</a>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
@@ -52,12 +55,49 @@
                         @Html.Raw(courseOptionList)
                     </select>
                 </div>
-                
+
             </div>
 
             <div class="col-12" id="scatterChart">
 
             </div>
         </div>
+        <div class="tab-pane fade" id="train" role="tabpanel" aria-labelledby="train-tab">
+            <h3 class="display-4 display-small text-center mt-3">Train the model using this dataset</h3>
+            <div class="form-group mt-3 mb-3">
+                <form id="trainForm" asp-controller="Train" asp-action="Index" method="post">
+                    <div class="form-group">
+                        <label for="epochsInput">Epochs</label>
+                        <input type="number" class="form-control" name="epochsInput" step="1" id="epochsInput" placeholder="1500" min="10" max="100000" value="1500" />
+                    </div>
+                    <div class="form-group">
+                        <label for="lrInput">Learning Rate</label>
+                        <input type="number" class="form-control" step="any" name="lrInput" id="lrInput" placeholder="0.1" min="0.0001" max="10" value="0.1" />
+                    </div>
+                    <input type="submit" class="btn btn-dark" name="learnSubmit" id="learnSubmit" />
+                </form>
+            </div>
+        </div>
     </div>
+
+    <div class="modal" tabindex="-1" id="trainingModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="container text-center">
+                        <div id="spinnerTraining" class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <span id="spinnerTraining" class="display-4 display-small">
+                            <br>
+                            Training the model.
+                            <br>
+                            This may take some time...
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

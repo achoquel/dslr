@@ -1,7 +1,8 @@
-﻿using System;
-using common.Controllers;
+﻿using common.Controllers;
+using common.Enumerations;
 using common.Models;
 using logreg_train.Controllers;
+using System;
 
 namespace logreg_train
 {
@@ -11,11 +12,15 @@ namespace logreg_train
         {
             try
             {
-                if (args.Length > 0 )
+                if (args.Length > 0)
                 {
-                    Console.WriteLine(args[0]);
-                    DatasetModel dataset = DatasetParsingController.ParseDatasetFromFile(args[0]);
-                    LogregController.Train(dataset);
+                    DatasetModel dataset = DatasetParsingController.ParseDatasetFromFile(args[0], ExecutionModeEnum.TRAINING);
+                    LogregController.Train(dataset).Export();
+                    Console.Write("Done !\nWeights have successfully been exported.");
+                }
+                else
+                {
+                    throw new Exception("No dataset provided !");
                 }
             }
             catch (Exception e)

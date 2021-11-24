@@ -1,83 +1,158 @@
-﻿using common.Models;
+﻿using common.Controllers;
+using common.Enumerations;
+using common.Models;
 using logreg_train.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace logreg_train.Controllers
 {
-    /// <summary>
-    /// https://www.youtube.com/watch?v=z_xiwjEdAC4 C1W2L09
-    /// https://www.youtube.com/watch?v=KKfZLXcF-aE C1W2L10
-    /// </summary>
     public class LogregController
     {
-        private static readonly int NB_EPOCHS = 1000;
-        private static readonly float LR = 0.1f;
+        /// <summary>
+        /// The number of epochs
+        /// </summary>
+        private static int NB_EPOCHS = 1500;
 
-        public static void Train(DatasetModel dataset)
+        /// <summary>
+        /// The learning rate
+        /// </summary>
+        private static float LR = 0.1f;
+
+        /// <summary>
+        /// Handles the training of a dataset
+        /// </summary>
+        /// <param name="dataset"></param>
+        /// <returns></returns>
+        public static LogRegTrainingResultsModel Train(DatasetModel dataset, bool progressBar = true, int? epochs = null, float? lr = null)
         {
-            //recuperer les donnees et creer le LogRegDatasModel
-            LogRegDatasModel datas = new LogRegDatasModel() { BaseEntries = dataset.Entries };
-            //potentiellement multithreader ici
-            (var gryffindorWeights, var gryffindorB) = LogisticRegression(datas.X, datas.YForGryffindor);
-            (var hufflepuffWeights, var hufflepuffB) = LogisticRegression(datas.X, datas.YForHufflepuff);
-            (var slytherinWeights, var slytherinB) = LogisticRegression(datas.X, datas.YForSlytherin);
-            (var ravenclawWeights, var ravenclawB) = LogisticRegression(datas.X, datas.YForRavenclaw);
-            Console.WriteLine("toot");
+            LogRegDatasModel datas = new LogRegDatasModel(dataset.FilledFeatures);
+
+            //add backend verif for min maxs
+            if (epochs.HasValue && epochs.Value >= 10 && epochs.Value <= 100000)
+            {
+                NB_EPOCHS = epochs.Value;
+            }
+
+            if (lr.HasValue && lr.Value > 0f && lr <= 10)
+            {
+                LR = lr.Value;
+            }
+
+            float[] gryffindorWeights = new float[13], hufflepuffWeights = new float[13], slytherinWeights = new float[13], ravenclawWeights = new float[13];
+            float[] gryffindorLossHistory, hufflepuffLossHistory, slytherinLossHistory, ravenclawLossHistory;
+            gryffindorLossHistory = new float[NB_EPOCHS]; hufflepuffLossHistory = new float[NB_EPOCHS]; slytherinLossHistory = new float[NB_EPOCHS]; ravenclawLossHistory = new float[NB_EPOCHS];
+
+            Parallel.Invoke(() =>
+            {
+                gryffindorWeights = LogisticRegression(datas.X, datas.YForGryffindor, ref gryffindorLossHistory, progressBar, lossHistoryCalculation: dataset.Mode == ExecutionModeEnum.VISUALIZE);
+            },
+            () =>
+            {
+                hufflepuffWeights = LogisticRegression(datas.X, datas.YForHufflepuff, ref hufflepuffLossHistory, lossHistoryCalculation: dataset.Mode == ExecutionModeEnum.VISUALIZE);
+            },
+            () =>
+            {
+                slytherinWeights = LogisticRegression(datas.X, datas.YForSlytherin, ref slytherinLossHistory, lossHistoryCalculation: dataset.Mode == ExecutionModeEnum.VISUALIZE);
+            },
+            () =>
+            {
+                ravenclawWeights = LogisticRegression(datas.X, datas.YForRavenclaw, ref ravenclawLossHistory, lossHistoryCalculation: dataset.Mode == ExecutionModeEnum.VISUALIZE);
+            }
+            );
+
+            return new LogRegTrainingResultsModel(gryffindorWeights, hufflepuffWeights, slytherinWeights, ravenclawWeights)
+            {
+                GryffindorLossHistory = gryffindorLossHistory,
+                HufflepuffLossHistory = hufflepuffLossHistory,
+                SlytherinLossHistory = slytherinLossHistory,
+                RavenclawLossHistory = ravenclawLossHistory
+            };
         }
 
-        private static (float[], float) LogisticRegression(LogRegEntryModel[] x, int[] y)
+        /// <summary>
+        /// Handles the logistic regression over all features
+        /// </summary>
+        /// <param name="x">The list of features values</param>
+        /// <param name="y">The belonging to a specific houses of the students</param>
+        /// <param name="displayProgressBar">An option to display the progress bar in the console on runtime. Only one call should have it set to true.</param>
+        /// <returns></returns>
+        private static float[] LogisticRegression(List<float[]> x, int[] y, ref float[] lossHistory, bool displayProgressBar = false, bool lossHistoryCalculation = false)
         {
-            float[] w = new float[5] { 0f, 0f, 0f, 0f, 0f };
-            float b = 0f;
+            //We initialize the weights to 0
+            float[] w = new float[13] { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
 
-            for (int i = 0; i < NB_EPOCHS; ++i)
-                (w, b) = GradientDescent(x, y, w, b);
-            return (w, b);
+            if (displayProgressBar)
+            {
+                Console.Write("Performing model training... ");
+                using (var progress = new ProgressBar())
+                {
+                    for (int i = 0; i < NB_EPOCHS; ++i)
+                    {
+                        if (lossHistoryCalculation)
+                        {
+                            lossHistory[i] = Loss(x, y, w);
+                        }
+
+                        w = GradientDescent(x, y, w);
+                        progress.Report((double)i / NB_EPOCHS);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < NB_EPOCHS; ++i)
+                {
+                    if (lossHistoryCalculation)
+                    {
+                        lossHistory[i] = Loss(x, y, w);
+                    }
+
+                    w = GradientDescent(x, y, w);
+                }
+            }
+
+            return w;
         }
 
-        private static (float[], float) GradientDescent(LogRegEntryModel[] x, int[] y, float[] w, float b)
+        /// <summary>
+        /// Runs the gradient descent to find the good weights
+        /// </summary>
+        /// <param name="x">The list of features values</param>
+        /// <param name="y">The belonging to a specific houses of the students</param>
+        /// <param name="weights">The actual values for the weights</param>
+        /// <returns></returns>
+        private static float[] GradientDescent(List<float[]> x, int[] y, float[] weights)
         {
-            float[] wsum = new float[5] { 0f, 0f, 0f, 0f, 0f};
-            float bsum = 0f;
-            int m = 0;
+            float[] wSum = new float[13] { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+            int m = x.Count;
             for (int i = 0; i < m; ++i)
             {
-                float z = DotProduct(x[i].X, w, b);
-                float a = SigmaFunction(z);
-                float dz = a - y[i];
-                Parallel.For(0, wsum.Length, (iter, state) => 
-                { 
-                    wsum[iter] += x[i].X[iter] * dz;
+                float h = MathUtils.Sigmoid(MathUtils.Dot(x[i], weights));
+                float diff = h - y[i];
+                Parallel.For(0, wSum.Length, (iter, state) =>
+                {
+                    wSum[iter] += x[i][iter] * diff;
                 });
-                bsum += dz;
             }
-            Parallel.For(0, wsum.Length, (iter, state) =>
+            Parallel.For(0, weights.Length, (iter, state) =>
             {
-                wsum[iter] -= LR * (wsum[iter] / m);
+                weights[iter] -= LR * (wSum[iter] / m);
             });
-            bsum = b - LR * (bsum / m);
 
-            return (wsum, bsum);
+            return weights;
         }
 
-        private static float DotProduct(float[] x, float[] w, float b)
+        private static float Loss(List<float[]> x, int[] y, float[] weights)
         {
-            //check si 'sum = b' au debut != 'sum += b' a la fin
-            float sum = b;
-            for(int i = 0; i < x.Length && i < w.Length; ++i)
+            float sum = 0f;
+            for (int i = 0; i < x.Count; ++i)
             {
-                sum += x[i] * w[i];
+                float h = MathUtils.Sigmoid(MathUtils.Dot(x[i], weights));
+                sum += y[i] * MathF.Log(h) + (1f - y[i]) * MathF.Log(1f - h);
             }
-            return sum;
-        }
-
-        private static float SigmaFunction(float z)
-        {
-            return (1f / (1f - MathF.Exp(-z)));
+            return sum / (-x.Count);
         }
     }
 }

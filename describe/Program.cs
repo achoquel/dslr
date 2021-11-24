@@ -1,7 +1,7 @@
 ﻿using common.Controllers;
+using common.Enumerations;
 using common.Models;
 using System;
-using System.Linq;
 
 namespace describe
 {
@@ -9,20 +9,21 @@ namespace describe
     {
         static void Main(string[] args)
         {
-            if (args.Length > 0)
+            try
             {
-                try
+                if (args.Length > 0)
                 {
-                    DatasetModel dataset = DatasetParsingController.ParseDatasetFromFile(args[0]);
+                    DatasetModel dataset = DatasetParsingController.ParseDatasetFromFile(args[0], ExecutionModeEnum.DESCRIBE);
                     dataset.Describe();
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine(e.Message);
+                    throw new Exception("No dataset provided !");
                 }
             }
-            else
+            catch (Exception e)
             {
+                Console.WriteLine("An error occurred: " + e.Message);
             }
         }
     }

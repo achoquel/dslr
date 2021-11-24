@@ -2055,6 +2055,32 @@
         "runtime": {
           "bin/placeholder/common.dll": {}
         }
+      },
+      "logreg_predict/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "common": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/logreg_predict.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/logreg_predict.dll": {}
+        }
+      },
+      "logreg_train/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "common": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/logreg_train.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/logreg_train.dll": {}
+        }
       }
     }
   },
@@ -7005,42 +7031,62 @@
       "type": "project",
       "path": "../common/common.csproj",
       "msbuildProject": "../common/common.csproj"
+    },
+    "logreg_predict/1.0.0": {
+      "type": "project",
+      "path": "../logreg_predict/logreg_predict.csproj",
+      "msbuildProject": "../logreg_predict/logreg_predict.csproj"
+    },
+    "logreg_train/1.0.0": {
+      "type": "project",
+      "path": "../logreg_train/logreg_train.csproj",
+      "msbuildProject": "../logreg_train/logreg_train.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net5.0": [
       "Highsoft.Highcharts >= 9.2.2.1",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 5.0.2",
-      "common >= 1.0.0"
+      "common >= 1.0.0",
+      "logreg_predict >= 1.0.0",
+      "logreg_train >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "/Users/adrian/.nuget/packages/": {}
+    "C:\\Users\\Adrien\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/adrian/Projects/dslr/visualize/visualize.csproj",
+      "projectUniqueName": "C:\\Users\\Adrien\\source\\repos\\dslr\\visualize\\visualize.csproj",
       "projectName": "visualize",
-      "projectPath": "/Users/adrian/Projects/dslr/visualize/visualize.csproj",
-      "packagesPath": "/Users/adrian/.nuget/packages/",
-      "outputPath": "/Users/adrian/Projects/dslr/visualize/obj/",
+      "projectPath": "C:\\Users\\Adrien\\source\\repos\\dslr\\visualize\\visualize.csproj",
+      "packagesPath": "C:\\Users\\Adrien\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Adrien\\source\\repos\\dslr\\visualize\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/adrian/.config/NuGet/NuGet.Config"
+        "C:\\Users\\Adrien\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "/Users/adrian/Projects/dslr/common/common.csproj": {
-              "projectPath": "/Users/adrian/Projects/dslr/common/common.csproj"
+            "C:\\Users\\Adrien\\source\\repos\\dslr\\common\\common.csproj": {
+              "projectPath": "C:\\Users\\Adrien\\source\\repos\\dslr\\common\\common.csproj"
+            },
+            "C:\\Users\\Adrien\\source\\repos\\dslr\\logreg_predict\\logreg_predict.csproj": {
+              "projectPath": "C:\\Users\\Adrien\\source\\repos\\dslr\\logreg_predict\\logreg_predict.csproj"
+            },
+            "C:\\Users\\Adrien\\source\\repos\\dslr\\logreg_train\\logreg_train.csproj": {
+              "projectPath": "C:\\Users\\Adrien\\source\\repos\\dslr\\logreg_train\\logreg_train.csproj"
             }
           }
         }
@@ -7082,7 +7128,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.402/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

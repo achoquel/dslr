@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "logreg_predict": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\Adrien\\source\\repos\\dslr\\datasets\\dataset_test.csv\""
+    }
+  }
+}

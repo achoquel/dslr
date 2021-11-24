@@ -1,25 +1,34 @@
 ﻿using common.Controllers;
+using common.Enumerations;
 using common.Models;
 using Highsoft.Web.Mvc.Charts;
 using Highsoft.Web.Mvc.Charts.Rendering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using visualize.Models;
 
 namespace visualize.Controllers
 {
-    [Route("/[controller]/[action]")]
-    public class ChartsController : Controller
+    public class ChartsController : BaseController
     {
-        private static string[] HOUSES_NAMES = { "Gryffindor", "Hufflepuff", "Slytherin", "Ravenclaw" };
+        /// <summary>
+        /// The houses names
+        /// </summary>
+        private readonly static string[] HOUSES_NAMES = { "Gryffindor", "Hufflepuff", "Slytherin", "Ravenclaw" };
 
-        private static DatasetModel _dataset;
+        public IActionResult Index()
+        {
+            if (mainDataset != null && mainDataset.IsValidDataset())
+            {
+                return View(new ChartsIndexViewModel() { Courses = mainDataset.Features?.Select(f => f.FeatureName).Distinct().ToList() });
+            }
+
+            return RedirectToAction("Index", "Home", routeValues: new HomeIndexViewModel() { Error = true, ErrorMessage = "An error occurred." });
+        }
 
         [HttpPost]
         public IActionResult Index(IFormFile datasetFile)
@@ -27,21 +36,16 @@ namespace visualize.Controllers
             try
             {
                 DatasetModel dataset = TryParseDatasetFromFile(datasetFile);
-                _dataset = dataset;
+                mainDataset = dataset;
+                trainingResults = null;
+                predictionResults = null;
                 return View(new ChartsIndexViewModel() { Courses = dataset.Features?.Select(f => f.FeatureName).Distinct().ToList() });
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                return RedirectToAction("Index", "Home", routeValues: new HomeIndexViewModel() { Error = true, ErrorMessage = "An error occurred ! " + e.Message });
             }
-            return RedirectToAction("Home", "Index");
-        }
-
-        public IActionResult Index()
-        {
-            if (_dataset != null && _dataset.Features != null)
-                return View(new ChartsIndexViewModel() { Courses = _dataset.Features?.Select(f => f.FeatureName).Distinct().ToList() });
-            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult PairPlot()
@@ -49,12 +53,17 @@ namespace visualize.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Generates the data to display an histogram
+        /// </summary>
+        /// <param name="courseName"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult GenerateHistogramDataPost(string courseName)
         {
-            if (_dataset != null && _dataset.Features != null)
+            if (mainDataset != null && mainDataset.IsValidDataset())
             {
-                List<string> availableCourses = _dataset.Features.Select(f => f.FeatureName).Distinct().ToList();
+                List<string> availableCourses = mainDataset.FullFeatures.Select(f => f.FeatureName).Distinct().ToList();
                 if (availableCourses.Contains(courseName))
                 {
                     var scatterModel = new ChartAjaxModel()
@@ -70,12 +79,18 @@ namespace visualize.Controllers
             return Json(false);
         }
 
+        /// <summary>
+        /// Generates the data to display a scatter plot
+        /// </summary>
+        /// <param name="courseName1"></param>
+        /// <param name="courseName2"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult GenerateScatterPlotDataPost(string courseName1, string courseName2)
         {
-            if (_dataset != null && _dataset.Features != null)
+            if (mainDataset != null && mainDataset.IsValidDataset())
             {
-                List<string> availableCourses = _dataset.Features.Select(f => f.FeatureName).Distinct().ToList();
+                List<string> availableCourses = mainDataset.FullFeatures.Select(f => f.FeatureName).Distinct().ToList();
                 if (availableCourses.Contains(courseName1) && availableCourses.Contains(courseName2))
                 {
                     var scatterModel = new ChartAjaxModel()
@@ -86,32 +101,42 @@ namespace visualize.Controllers
                     };
                     scatterModel.Series = GenerateScatterSeries(courseName1, courseName2);
                     return Json(scatterModel);
-                }  
+                }
             }
             return Json(false);
         }
 
+        /// <summary>
+        /// Generates the data to display a pair plot
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult GeneratePairPlotData()
         {
-            if (_dataset != null && _dataset.Features != null)
+            if (mainDataset != null && mainDataset.IsValidDataset())
             {
                 List<ChartAjaxModel> charts = new List<ChartAjaxModel>();
-                List<string> availableCourses = _dataset.Features.Select(f => f.FeatureName).Distinct().ToList();
-                for (int y = 0; y < availableCourses.Count(); ++y)
+                List<string> availableCourses = mainDataset.FullFeatures.Select(f => f.FeatureName).Distinct().ToList();
+                for (int y = 0; y < MathUtils.Count(availableCourses); ++y)
                 {
-                    for (int x = 0; x < availableCourses.Count(); ++x)
+                    for (int x = 0; x < MathUtils.Count(availableCourses); ++x)
                     {
                         var chartModel = new ChartAjaxModel()
                         {
                             Id = $"chart{x}-{y}",
+                            Subtitle = $"r = {CalulateCorrelationCoefficient(availableCourses[x], availableCourses[y])}",
                             XAxisName = y == 12 ? availableCourses[x] : "",
                             YAxisName = x == 0 ? availableCourses[y] : ""
                         };
                         if (availableCourses[x] != availableCourses[y])
+                        {
                             chartModel.Series = GenerateScatterSeries(availableCourses[x], availableCourses[y]);
+                        }
                         else
+                        {
                             chartModel.Series = GenerateHistogramSeries(availableCourses[x]);
+                        }
+
                         charts.Add(chartModel);
                     }
                 }
@@ -120,15 +145,95 @@ namespace visualize.Controllers
             return Json(false);
         }
 
+        public static HighchartsRenderer GenerateLossChart()
+        {
+            if (trainingResults != null && trainingResults.GryffindorLossHistory.Length >= 10 && trainingResults.HufflepuffLossHistory.Length >= 10 && trainingResults.RavenclawLossHistory.Length >= 10 && trainingResults.SlytherinLossHistory.Length >= 10)
+            {
+                List<Series> series = new List<Series>();
+                series.Add(new SplineSeries()
+                {
+                    Data = GenerateSplineSerie(trainingResults.GryffindorLossHistory),
+                    Name = "Gryffindor",
+                    TurboThreshold = trainingResults.GryffindorLossHistory.Length,
+                    Color = "rgba(101,0,0,255)",
+                    Opacity = 0.6D
+                });
+                series.Add(new SplineSeries()
+                {
+                    Data = GenerateSplineSerie(trainingResults.HufflepuffLossHistory),
+                    Name = "Hufflepuff",
+                    TurboThreshold = trainingResults.HufflepuffLossHistory.Length,
+                    Color = "rgba(255,157,10,255)",
+                    Opacity = 0.6D
+                });
+                series.Add(new SplineSeries()
+                {
+                    Data = GenerateSplineSerie(trainingResults.SlytherinLossHistory),
+                    Name = "Slytherin",
+                    TurboThreshold = trainingResults.SlytherinLossHistory.Length,
+                    Color = "rgba(47,117,28,255)",
+                    Opacity = 0.6D
+                });
+                series.Add(new SplineSeries()
+                {
+                    Data = GenerateSplineSerie(trainingResults.RavenclawLossHistory),
+                    Name = "Ravenclaw",
+                    TurboThreshold = trainingResults.SlytherinLossHistory.Length,
+                    Color = "rgba(26,57,86,255)",
+                    Opacity = 0.6D
+                });
+                var chartOptions = new Highcharts
+                {
+                    Title = new Title
+                    {
+                        Text = "Loss History"
+                    },
+                    Subtitle = new Subtitle
+                    {
+                        Text = "during model training"
+                    },
+                    XAxis = new List<XAxis>
+                    {
+                        new XAxis
+                        {
+                            Title = new XAxisTitle(){ Text = "Epochs" }
+                        }
+                    },
+                    YAxis = new List<YAxis>
+                    {
+                        new YAxis
+                        {
+                            Title = new YAxisTitle(){ Text = "Loss" }
+                        }
+                    },
+                    Credits = new Credits
+                    {
+                        Enabled = false
+                    },
+                    Series = series,
+                    ID = "lossHistoryHighcharts"
+                };
+                return new HighchartsRenderer(chartOptions);
+            }
+            throw new Exception("Training results are not valid.");
+        }
+
+        #region Private Methods
+        /// <summary>
+        /// Generates the series of a Scatter Plot
+        /// </summary>
+        /// <param name="courseNameX"></param>
+        /// <param name="courseNameY"></param>
+        /// <returns></returns>
         private List<CustomChartSerie> GenerateScatterSeries(string courseNameX, string courseNameY)
         {
             List<CustomChartSerie> series = new List<CustomChartSerie>();
             foreach (string house in HOUSES_NAMES)
             {
                 var serie = new CustomChartSerie() { Name = house };
-                var feature1 = _dataset.Features.Where(f => f.FeatureName == courseNameX).First().Values.Where(v => v.House == house).Select(v => v.Value).ToList();
-                var feature2 = _dataset.Features.Where(f => f.FeatureName == courseNameY).First().Values.Where(v => v.House == house).Select(v => v.Value).ToList();
-                for (int i = 0; i < feature1.Count() && i < feature2.Count(); ++i)
+                var feature1 = mainDataset.FullFeatures.Where(f => f.FeatureName == courseNameX).First().Values.Where(v => v.House == house).Select(v => v.Value).ToList();
+                var feature2 = mainDataset.FullFeatures.Where(f => f.FeatureName == courseNameY).First().Values.Where(v => v.House == house).Select(v => v.Value).ToList();
+                for (int i = 0; i < MathUtils.Count(feature1) && i < MathUtils.Count(feature2); ++i)
                 {
                     serie.Data.Add(new SerieValues() { X = feature1[i], Y = feature2[i] });
                 }
@@ -137,14 +242,19 @@ namespace visualize.Controllers
             return series;
         }
 
+        /// <summary>
+        /// Generates the series of a Histogram
+        /// </summary>
+        /// <param name="courseName"></param>
+        /// <returns></returns>
         private List<CustomChartSerie> GenerateHistogramSeries(string courseName)
         {
             List<CustomChartSerie> series = new List<CustomChartSerie>();
             foreach (string house in HOUSES_NAMES)
             {
                 var serie = new CustomChartSerie() { Name = house };
-                var feature = _dataset.Features.Where(f => f.FeatureName == courseName).First().Values.Where(v => v.House == house).Select(v => v.Value).ToList();
-                for (int i = 0; i < feature.Count(); ++i)
+                var feature = mainDataset.FullFeatures.Where(f => f.FeatureName == courseName).First().Values.Where(v => v.House == house).Select(v => v.Value).ToList();
+                for (int i = 0; i < MathUtils.Count(feature); ++i)
                 {
                     serie.Data.Add(new SerieValues() { X = 0, Y = feature[i] });
                 }
@@ -153,6 +263,21 @@ namespace visualize.Controllers
             return series;
         }
 
+        private static List<SplineSeriesData> GenerateSplineSerie(float[] data)
+        {
+            var serie = new List<SplineSeriesData>();
+            for (int i = 0; i < data.Length; ++i)
+            {
+                serie.Add(new SplineSeriesData() { X = i, Y = data[i] });
+            }
+            return serie;
+        }
+
+        /// <summary>
+        /// Parses the dataset from the Http FormFile
+        /// </summary>
+        /// <param name="datasetFile"></param>
+        /// <returns></returns>
         private static DatasetModel TryParseDatasetFromFile(IFormFile datasetFile)
         {
             try
@@ -165,7 +290,7 @@ namespace visualize.Controllers
                     {
                         fileContents = reader.ReadToEnd();
                     }
-                    DatasetModel dataset = DatasetParsingController.ParseDatasetFromString(fileContents);
+                    DatasetModel dataset = DatasetParsingController.ParseDatasetFromString(fileContents, ExecutionModeEnum.VISUALIZE);
                     return dataset;
                 }
                 throw new Exception("File is empty or is not a .csv.");
@@ -176,120 +301,40 @@ namespace visualize.Controllers
             }
         }
 
-        //private static List<HighchartsRenderer> CreateHistogramCharts(List<NumericalFeatureModel> features)
-        //{
-        //    List<HighchartsRenderer> charts = new List<HighchartsRenderer>();
-        //    foreach (NumericalFeatureModel feature in features)
-        //    {
-        //        List<ColumnSeries> series = new List<ColumnSeries>();
-                
-        //        var chartOptions = new Highcharts()
-        //        {
-        //            Title = new Title() { Text = $"{feature.FeatureName} marks repartition between houses" },
-        //            XAxis = new List<XAxis>()
-        //            {
-        //                new XAxis()
-        //                {
-        //                    Title = new XAxisTitle(){ Text = "Marks"},
-        //                }
-        //            },
-        //            YAxis = new List<YAxis>()
-        //            {
-        //                new YAxis()
-        //                {
-        //                    Title = new YAxisTitle(){ Text = "Number of Students"}
-        //                }
-        //            },
-        //            ID = $"{feature.FeatureName.Replace(' ', '_')}HistogramChart"
-        //        };
-        //        //Need to do the computation for the histograms
-        //        charts.Add(new HighchartsRenderer(chartOptions));
-        //    }
-        //    return charts;
-        //}
+        /// <summary>
+        /// Calculates the correlation Coefficient to display on pair plot
+        /// </summary>
+        /// <param name="courseNameX">The name of the course from the x axis</param>
+        /// <param name="courseNameY">The name of the course from the y axis</param>
+        /// <returns></returns>
+        private float CalulateCorrelationCoefficient(string courseNameX, string courseNameY)
+        {
+            var featureX = mainDataset.FullFeatures.Where(f => f.FeatureName == courseNameX).First().Values.Select(v => v.Value).ToList();
+            var featureY = mainDataset.FullFeatures.Where(f => f.FeatureName == courseNameY).First().Values.Select(v => v.Value).ToList();
+            var meanX = MathUtils.Mean(featureX);
+            var meanY = MathUtils.Mean(featureY);
 
-        //private static List<HighchartsRenderer> CreateScatterPlotCharts(List<NumericalFeatureModel> features)
-        //{
-        //    List<HighchartsRenderer> charts = new List<HighchartsRenderer>();
+            float topSum = 0f;
+            for (int i = 0; i < MathUtils.Count(featureX) && i < MathUtils.Count(featureY); ++i)
+            {
+                topSum += (featureX[i] - meanX) * (featureY[i] - meanY);
+            }
+            float xSum = 0f;
+            foreach (var x in featureX)
+            {
+                xSum += MathF.Pow(x - meanX, 2);
+            }
 
-        //    foreach(NumericalFeatureModel feature in features)
-        //    {
-        //        foreach(NumericalFeatureModel feature2 in features)
-        //        {
-        //            List<ScatterSeries> series = new List<ScatterSeries>();
+            float ySum = 0f;
+            foreach (var y in featureY)
+            {
+                ySum += MathF.Pow(y - meanY, 2);
+            }
 
-        //            var chartOptions = new Highcharts()
-        //            {
-        //                //Title = new Title() { Text = $"{feature.FeatureName} marks" },
-        //                XAxis = new List<XAxis>()
-        //            {
-        //                new XAxis()
-        //                {
-        //                    Title = new XAxisTitle(){ Text = feature.FeatureName},
-        //                }
-        //            },
-        //                YAxis = new List<YAxis>()
-        //            {
-        //                new YAxis()
-        //                {
-        //                    Title = new YAxisTitle(){ Text = feature2.FeatureName}
-        //                }
-        //            },
-        //                ID = $"{feature.FeatureName.Replace(' ', '_')}{feature2.FeatureName.Replace(' ', '_')}ScatterPlotChart"
-        //            };
-        //            foreach (string hName in HOUSES_NAMES)
-        //            {
-        //                var dataX = feature.Values.Where(v => v.House == hName).OrderBy(v => v).ToList();
-        //                var dataY = feature2.Values.Where(v => v.House == hName).OrderBy(v => v).ToList();
-        //                var serie = new ScatterSeries();
-        //                for (int i = 0; i < MathUtils.Count(dataX) && i < MathUtils.Count(dataY); ++i)
-        //                {
-        //                    serie.Data.Add(new ScatterSeriesData() { X = dataX[i].Value, Y = dataY[i].Value });
-        //                }
-        //                chartOptions.Series.Add(serie);
-        //            }
-        //            charts.Add(new HighchartsRenderer(chartOptions));
-        //        }
-                
-        //    }
-        //    return charts;
-        //}
+            float bottom = MathF.Sqrt(xSum * ySum);
 
-        //private static HighchartsRenderer GenerateChart(ChartModel graphData)
-        //{
-        //    var scatterPlotChartOptions = new Highcharts
-        //    {
-        //        Title = new Title
-        //        {
-        //            Text = graphData.ChartTitle
-        //        },
-        //        Subtitle = new Subtitle
-        //        {
-        //            Text = graphData.ChartSubtitle
-        //        },
-        //        XAxis = new List<XAxis>
-        //        {
-        //            new XAxis
-        //            {
-        //                Title = new XAxisTitle(){ Text = graphData.XAxisName }
-        //            }
-        //        },
-        //        YAxis = new List<YAxis>
-        //        {
-        //            new YAxis
-        //            {
-        //                Title = new YAxisTitle(){ Text = graphData.YAxisName }
-        //            }
-        //        },
-        //        Credits = new Credits
-        //        {
-        //            Enabled = false
-        //        },
-        //        Series = graphData.Series,
-        //        ID = graphData.ChartID
-        //    };
-
-        //    return new HighchartsRenderer(scatterPlotChartOptions);
-        //}
+            return topSum / bottom;
+        }
+        #endregion
     }
 }

@@ -4,32 +4,48 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - dslr</title>
+
+    @*jQuery*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    @*Custom css/js*@
     <link rel="stylesheet" href="~/css/site.css" runat="server" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" />
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @*Bootstrap*@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @*Fonts*@
+    <link rel="stylesheet" href="~/css/all.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
+
+    @*Highcharts*@
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/histogram-bellcurve.js?_ga=2.185846505.1123760257.1633597830-297341802.1632214812"></script>
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
+
+    @*DataTable*@
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.css" />
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.js"></script>
+
 </head>
 <body>
-    <div class="container">
-        <header class="header pt-2 pb-2">
-            <div class="row flex-nowrap justify-content-between align-items-center">
-                <div class="col-3 pt-1">
+    <header class="header pt-2 pb-2">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+            <div class="col-3 pt-1">
 
-                </div>
-                <div class="col-6 text-center">
-                    <a class="text-dark" href="/Home"><i class="fas fa-chart-line fa-2x"></i><span class="title ml-2">DSLR</span></a>
-                </div>
-                <div class="col-3 d-flex align-items-center justify-content-end">
-                    <a class="text-dark" href="https://github.com/achoquel"><i class="fab fa-github fa-2x"></i></a>
-                </div>
             </div>
-        </header>
+            <div class="col-6 text-center">
+                <a class="text-dark" href="/Home"><i class="fas fa-hat-witch fa-2x"></i><span class="title ml-2">DSLR</span></a>
+            </div>
+            <div class="header-toggle ml-auto">
+                <a class="text-dark" href="https://github.com/achoquel"><i class="fab fa-github fa-2x"></i></a>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+
     </div>
     <main role="main" class="pt-3 pb-3">
         @RenderBody()

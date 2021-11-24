@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TinyCsvParser.Mapping;
-using TinyCsvParser.TypeConverter;
 
 namespace common.Models
 {
@@ -18,35 +13,52 @@ namespace common.Models
 
         public string LastName { get; set; }
 
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
 
         public string BestHand { get; set; }
 
-        public float Arithmancy { get; set; }
+        public float? Arithmancy { get; set; }
 
-        public float Astronomy { get; set; }
+        public float? Astronomy { get; set; }
 
-        public float Herbology { get; set; }
+        public float? Herbology { get; set; }
 
-        public float DefenseAgainstTheDarkArts { get; set; }
+        public float? DefenseAgainstTheDarkArts { get; set; }
 
-        public float Divination { get; set; }
+        public float? Divination { get; set; }
 
-        public float MuggleStudies { get; set; }
+        public float? MuggleStudies { get; set; }
 
-        public float AncientRunes { get; set; }
+        public float? AncientRunes { get; set; }
 
-        public float HistoryOfMagic { get; set; }
+        public float? HistoryOfMagic { get; set; }
 
-        public float Transfiguration { get; set; }
+        public float? Transfiguration { get; set; }
 
-        public float Potions { get; set; }
+        public float? Potions { get; set; }
 
-        public float CareOfMagicalCreatures { get; set; }
+        public float? CareOfMagicalCreatures { get; set; }
 
-        public float Charms { get; set; }
+        public float? Charms { get; set; }
 
-        public float Flying { get; set; }
+        public float? Flying { get; set; }
+
+        internal bool IsFull()
+        {
+            return Arithmancy.HasValue
+                && Astronomy.HasValue
+                && Herbology.HasValue
+                && DefenseAgainstTheDarkArts.HasValue
+                && Divination.HasValue
+                && MuggleStudies.HasValue
+                && AncientRunes.HasValue
+                && HistoryOfMagic.HasValue
+                && Transfiguration.HasValue
+                && Potions.HasValue
+                && CareOfMagicalCreatures.HasValue
+                && Charms.HasValue
+                && Flying.HasValue;
+        }
     }
 
     public class CsvEntryModelMapping : CsvMapping<CsvEntryModel>

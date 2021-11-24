@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "logreg_train": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\Adrien\\source\\repos\\dslr\\datasets\\dataset_train.csv\""
+    }
+  }
+}
