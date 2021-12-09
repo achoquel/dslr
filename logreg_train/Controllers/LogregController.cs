@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace logreg_train.Controllers
 {
-    public class LogregController
+    public static class LogregController
     {
         /// <summary>
         /// The number of epochs
@@ -24,6 +24,9 @@ namespace logreg_train.Controllers
         /// Handles the training of a dataset
         /// </summary>
         /// <param name="dataset"></param>
+        /// <param name="progressBar"></param>
+        /// <param name="epochs"></param>
+        /// <param name="lr"></param>
         /// <returns></returns>
         public static LogRegTrainingResultsModel Train(DatasetModel dataset, bool progressBar = true, int? epochs = null, float? lr = null)
         {
@@ -41,12 +44,11 @@ namespace logreg_train.Controllers
             }
 
             float[] gryffindorWeights = new float[13], hufflepuffWeights = new float[13], slytherinWeights = new float[13], ravenclawWeights = new float[13];
-            float[] gryffindorLossHistory, hufflepuffLossHistory, slytherinLossHistory, ravenclawLossHistory;
-            gryffindorLossHistory = new float[NB_EPOCHS]; hufflepuffLossHistory = new float[NB_EPOCHS]; slytherinLossHistory = new float[NB_EPOCHS]; ravenclawLossHistory = new float[NB_EPOCHS];
+            var gryffindorLossHistory = new float[NB_EPOCHS]; var hufflepuffLossHistory = new float[NB_EPOCHS]; var slytherinLossHistory = new float[NB_EPOCHS]; var ravenclawLossHistory = new float[NB_EPOCHS];
 
             Parallel.Invoke(() =>
             {
-                gryffindorWeights = LogisticRegression(datas.X, datas.YForGryffindor, ref gryffindorLossHistory, progressBar, lossHistoryCalculation: dataset.Mode == ExecutionModeEnum.VISUALIZE);
+                gryffindorWeights = LogisticRegression(datas.X, datas.YForGryffindor, ref gryffindorLossHistory, progressBar, dataset.Mode == ExecutionModeEnum.VISUALIZE);
             },
             () =>
             {
@@ -76,7 +78,9 @@ namespace logreg_train.Controllers
         /// </summary>
         /// <param name="x">The list of features values</param>
         /// <param name="y">The belonging to a specific houses of the students</param>
+        /// <param name="lossHistory"></param>
         /// <param name="displayProgressBar">An option to display the progress bar in the console on runtime. Only one call should have it set to true.</param>
+        /// <param name="lossHistoryCalculation"></param>
         /// <returns></returns>
         private static float[] LogisticRegression(List<float[]> x, int[] y, ref float[] lossHistory, bool displayProgressBar = false, bool lossHistoryCalculation = false)
         {

@@ -14,6 +14,7 @@ namespace common.Controllers
         /// Parses a dataset from a file
         /// </summary>
         /// <param name="path">The path of the file</param>
+        /// <param name="mode"></param>
         /// <returns></returns>
         public static DatasetModel ParseDatasetFromFile(string path, ExecutionModeEnum mode)
         {

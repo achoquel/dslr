@@ -30,7 +30,7 @@ namespace logreg_predict.Controllers
                 Tuple.Create(hufflepuffPred, "Hufflepuff"),
                 Tuple.Create(slytherinPred, "Slytherin"),
                 Tuple.Create(ravenclawPred, "Ravenclaw")
-            }.Max().Item2;
+            }.Max()?.Item2;
         }
     }
 }

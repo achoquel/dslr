@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -119,7 +120,7 @@ namespace common.Models
                         List<string[]> splittedLines = new List<string[]>();
                         foreach (var line in lines)
                         {
-                            splittedLines.Add(line.Split(',').ToList().Select(l => l.Replace('.', ',')).ToArray());
+                            splittedLines.Add(line.Split(',').ToArray());
                         }
                         //We check that we have all of our weights
                         if (splittedLines.All(sl => sl.Length == 13))
@@ -129,7 +130,7 @@ namespace common.Models
                             {
                                 for (int j = 0; j < splittedLines[i].Length; ++j)
                                 {
-                                    if (!float.TryParse(splittedLines[i][j], out w[i][j]))
+                                    if (!float.TryParse(splittedLines[i][j], NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.GetCultureInfo("en-US"), out w[i][j]))
                                     {
                                         throw new Exception("A weight is not well formated. Please train your model again.");
                                     }
@@ -163,7 +164,7 @@ namespace common.Models
             string csv = string.Empty;
             foreach (float f in w)
             {
-                csv += f.ToString().Replace(',', '.') + ",";
+                csv += f.ToString(CultureInfo.GetCultureInfo("en-US")) + ",";
             }
             //Remove the last comma
             csv = csv.Remove(csv.Length - 1);

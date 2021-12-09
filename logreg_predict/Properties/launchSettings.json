@@ -2,7 +2,7 @@
   "profiles": {
     "logreg_predict": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\Adrien\\source\\repos\\dslr\\datasets\\dataset_test.csv\""
+      "commandLineArgs": "/mnt/nfs/homes/achoquel/Desktop/dslr/datasets/dataset_test.csv"
     }
   }
 }

@@ -24,7 +24,7 @@ $(document).ready(() => {
                 $.ajax(
                     {
                         type: "POST",
-                        url: "GenerateHistogramDataPost",
+                        url: "/Charts/GenerateHistogramDataPost",
                         data: { courseName: option.toString() },
                         success: displayHistogram,
                         error: displayHistogramError
@@ -96,7 +96,7 @@ function handleScatterPlot() {
         $.ajax(
             {
                 type: "POST",
-                url: "GenerateScatterPlotDataPost",
+                url: "/Charts/GenerateScatterPlotDataPost",
                 data: { courseName1: option1.toString(), courseName2: option2.toString() },
                 success: displayScatterPlot,
                 error: displayScatterPlotError
@@ -326,7 +326,7 @@ function createPairPlot() {
     $.ajax(
         {
             type: "POST",
-            url: "GeneratePairPlotData",
+            url: "/Charts/GeneratePairPlotData",
             data: {},
             success: displayPairPlot,
             error: displayPairPlotError

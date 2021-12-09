@@ -35,7 +35,7 @@ namespace accuracy
                 }
                 else
                 {
-                    throw new Exception("Usage: dotnet run <prediction results> <true results>");
+                    throw new Exception("Usage: dotnet run <prediction results file> <true results file>");
                 }
             }
             catch (Exception e)
@@ -50,7 +50,7 @@ namespace accuracy
         /// <param name="pred"></param>
         /// <param name="truth"></param>
         /// <returns></returns>
-        static float Accuracy(string[] pred, string[] truth)
+        private static float Accuracy(string[] pred, string[] truth)
         {
             float sum = 0f;
             for (int i = 0; i < pred.Length; ++i)

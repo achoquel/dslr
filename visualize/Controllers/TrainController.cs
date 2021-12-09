@@ -31,7 +31,7 @@ namespace visualize.Controllers
             {
                 if (mainDataset != null && mainDataset.IsValidDataset())
                 {
-                    if (!float.TryParse(lrInput.Replace('.', ','), out float lr))
+                    if (!float.TryParse(lrInput, out float lr))
                     {
                         lr = 0.1f;
                     }

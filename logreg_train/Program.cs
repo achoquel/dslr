@@ -15,7 +15,8 @@ namespace logreg_train
                 if (args.Length > 0)
                 {
                     DatasetModel dataset = DatasetParsingController.ParseDatasetFromFile(args[0], ExecutionModeEnum.TRAINING);
-                    LogregController.Train(dataset).Export();
+                    var results = LogregController.Train(dataset, true, 1500, 0.1f);
+                    results.Export();
                     Console.Write("Done !\nWeights have successfully been exported.");
                 }
                 else
