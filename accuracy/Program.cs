@@ -17,18 +17,20 @@ namespace accuracy
                         string[] truth = File.ReadAllLines(args[1]);
                         if (pred.Length == truth.Length)
                         {
-                            ConsoleColor baseColor = Console.BackgroundColor;
                             for (int i = 1; i < Math.Max(pred.Length, truth.Length); ++i)
                             {
                                 if (pred[i] != truth[i])
                                 {
-                                    Console.BackgroundColor = ConsoleColor.Red;
-                                    Console.Write("- " + pred[i] + "  ");
+                                    Console.Write($"[{i - 1}] ");
+                                    Console.BackgroundColor = ConsoleColor.Red; 
+                                    Console.Write($"- {pred[i].Split(',')[1]}  ");
                                     Console.BackgroundColor = ConsoleColor.Green;
-                                    Console.Write("+ " + truth[i] + Environment.NewLine);
-                                    Console.BackgroundColor = baseColor;
+                                    Console.ForegroundColor = ConsoleColor.Black;
+                                    Console.WriteLine($"+ {truth[i].Split(',')[1]}");
+                                    Console.ResetColor();
                                 }
                             }
+                            Console.ResetColor();
                             Console.WriteLine("The accuracy of the prediciton is: " + (Accuracy(pred, truth) * 100).ToString("n2") + "%.");
                         }
                     }

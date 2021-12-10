@@ -135,9 +135,10 @@ namespace logreg_train.Controllers
             {
                 float h = MathUtils.Sigmoid(MathUtils.Dot(x[i], weights));
                 float diff = h - y[i];
+                var i1 = i;
                 Parallel.For(0, wSum.Length, (iter, state) =>
                 {
-                    wSum[iter] += x[i][iter] * diff;
+                    wSum[iter] += x[i1][iter] * diff;
                 });
             }
             Parallel.For(0, weights.Length, (iter, state) =>
